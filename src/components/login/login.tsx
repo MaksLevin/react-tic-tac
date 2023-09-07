@@ -1,10 +1,9 @@
-import React, { FunctionComponent } from 'react';
+import React, { FunctionComponent, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
-import { FormValues } from '../../core/models/login-model';
 import { loginValidationSchema } from './login-utils';
 import { UsersData } from '../../core/models/user-model';
 
@@ -22,16 +21,18 @@ const Login: FunctionComponent<LoginPropsType> = ({ onUsersLogin }) => {
     secondPlayer: '',
   };
 
-  const submitForm = (values: FormValues) => {
+  const submitForm = useCallback((values: UsersData) => {
     onUsersLogin({ firstPlayer: values.firstPlayer, secondPlayer: values.secondPlayer });
     routerNavigate('/game');
-  };
+  }, []);
 
-  const formikConfig = {
-    initialValues,
-    validationSchema: loginValidationSchema,
-    onSubmit: submitForm,
-  };
+  const formikConfig = useMemo(() => {
+    return {
+      initialValues,
+      validationSchema: loginValidationSchema,
+      onSubmit: submitForm,
+    };
+  }, [initialValues, submitForm]);
 
   const formik = useFormik(formikConfig);
 
@@ -69,7 +70,7 @@ const Login: FunctionComponent<LoginPropsType> = ({ onUsersLogin }) => {
             className="login-form-submit"
             type="submit"
             variant="outlined"
-            disabled={!!(errors.firstPlayer || errors.secondPlayer) === true}
+            disabled={!!(errors.firstPlayer || errors.secondPlayer)}
           >
             Login
           </Button>
