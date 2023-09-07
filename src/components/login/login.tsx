@@ -10,7 +10,7 @@ import { UsersData } from '../../core/models/user-model';
 import './login.scss';
 
 type LoginPropsType = {
-  onUsersLogin(usersData: UsersData): any;
+  onUsersLogin(usersData: UsersData): void;
 };
 
 const Login: FunctionComponent<LoginPropsType> = ({ onUsersLogin }) => {
