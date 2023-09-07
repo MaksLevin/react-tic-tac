@@ -1,25 +1,29 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+import Login from './components/login';
+import Game from './components/game';
+import { UsersData } from './core/models/user-model';
+
+import './App.scss';
 
 function App() {
+  const [usersData, setUsersData] = useState<UsersData>({
+    firstPlayer: '',
+    secondPlayer: '',
+  });
+
+  const onUsersLogin = (usersData: UsersData) => {
+    setUsersData(usersData);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="*" element={<Login onUsersLogin={onUsersLogin} />} />
+        <Route path="/game" element={<Game usersData={usersData} />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
