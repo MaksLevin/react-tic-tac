@@ -1,49 +1,55 @@
 import React, { FunctionComponent } from 'react';
 import { useNavigate } from 'react-router-dom';
-
 import { useFormik } from 'formik';
-import * as yup from 'yup';
-
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 
-import './login.css';
-import { FormValues, LoginPropsType } from '../../core/models/login-model';
+import { FormValues } from '../../core/models/login-model';
+import { loginValidationSchema } from './login-utils';
+import { UsersData } from '../../core/models/user-model';
 
-const loginValidationSchema = yup.object({
-  firstPlayer: yup.string().required('Name is required'),
-  secondPlayer: yup.string().required('Name is required'),
-});
+import './login.scss';
 
-const Login: FunctionComponent<LoginPropsType> = (props) => {
+type LoginPropsType = {
+  onUsersLogin(usersData: UsersData): any;
+};
+
+const Login: FunctionComponent<LoginPropsType> = ({ onUsersLogin }) => {
   const routerNavigate = useNavigate();
 
-  const formik = useFormik({
-    initialValues: {
-      firstPlayer: '',
-      secondPlayer: '',
-    },
-    validationSchema: loginValidationSchema,
-    onSubmit: (values: FormValues) => {
-      props.onUsersLogin({ firstPlayer: values.firstPlayer, secondPlayer: values.secondPlayer });
-      routerNavigate('/game');
-    },
-  });
+  const initialValues = {
+    firstPlayer: '',
+    secondPlayer: '',
+  };
 
+  const submitForm = (values: FormValues) => {
+    onUsersLogin({ firstPlayer: values.firstPlayer, secondPlayer: values.secondPlayer });
+    routerNavigate('/game');
+  };
+
+  const formikConfig = {
+    initialValues,
+    validationSchema: loginValidationSchema,
+    onSubmit: submitForm,
+  };
+
+  const formik = useFormik(formikConfig);
+
+  const { handleSubmit, values, handleChange, handleBlur, touched, errors } = formik;
   return (
     <section className="login">
       <div className="login-wrapper">
-        <h1 className="login-title">Set the player names</h1>
-        <form className="login-form" onSubmit={formik.handleSubmit} noValidate autoComplete="off">
+        <h1 className="login-title text-h2">Set the player names</h1>
+        <form className="login-form" onSubmit={handleSubmit} noValidate autoComplete="off">
           <TextField
             id="firstPlayer"
             name="firstPlayer"
             label="First Player"
-            value={formik.values.firstPlayer}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.firstPlayer && Boolean(formik.errors.firstPlayer)}
-            helperText={formik.touched.firstPlayer && formik.errors.firstPlayer}
+            value={values.firstPlayer}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            error={touched.firstPlayer && !!errors.firstPlayer}
+            helperText={touched.firstPlayer && errors.firstPlayer}
             variant="outlined"
           />
 
@@ -51,11 +57,11 @@ const Login: FunctionComponent<LoginPropsType> = (props) => {
             id="secondPlayer"
             name="secondPlayer"
             label="Second Player"
-            value={formik.values.secondPlayer}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.secondPlayer && Boolean(formik.errors.secondPlayer)}
-            helperText={formik.touched.secondPlayer && formik.errors.secondPlayer}
+            value={values.secondPlayer}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            error={touched.secondPlayer && !!errors.secondPlayer}
+            helperText={touched.secondPlayer && errors.secondPlayer}
             variant="outlined"
           />
 
@@ -63,7 +69,7 @@ const Login: FunctionComponent<LoginPropsType> = (props) => {
             className="login-form-submit"
             type="submit"
             variant="outlined"
-            disabled={Boolean(formik.errors.firstPlayer || formik.errors.secondPlayer) === true}
+            disabled={!!(errors.firstPlayer || errors.secondPlayer) === true}
           >
             Login
           </Button>

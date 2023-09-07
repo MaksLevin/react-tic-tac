@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import './App.css';
-
 import Login from './components/login';
 import Game from './components/game';
-
 import { UsersData } from './core/models/user-model';
+
+import './App.scss';
 
 function App() {
   const [usersData, setUsersData] = useState<UsersData>({
