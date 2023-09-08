@@ -1,0 +1,11 @@
+@import "../../styles/common/typography";
+
+.status {
+    margin-bottom: 30px;
+}
+
+.board-row:after {
+    clear: both;
+    content: "";
+    display: table;
+}
