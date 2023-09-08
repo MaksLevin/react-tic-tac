@@ -1,23 +1,23 @@
 import React, { FunctionComponent } from 'react';
 
 import Square from '../square';
-import { calculateWinner } from '../../core/utils/calculate-winner';
+import { calculateWinner } from '../../utils/calculate-winner';
 
 import './board.scss';
 
 type BoardPropsType = {
-  xIsNext: boolean;
+  isXNext: boolean;
   squares: string[];
   onPlay(nextSquares: string[]): void;
 };
 
-const Board: FunctionComponent<BoardPropsType> = ({ xIsNext, squares, onPlay }) => {
+const Board: FunctionComponent<BoardPropsType> = ({ isXNext, squares, onPlay }) => {
   function handleClick(squareIndex: number) {
     if (calculateWinner(squares) || squares[squareIndex]) {
       return;
     }
     const nextSquares = squares.slice();
-    if (xIsNext) {
+    if (isXNext) {
       nextSquares[squareIndex] = 'X';
     } else {
       nextSquares[squareIndex] = 'O';
@@ -30,7 +30,7 @@ const Board: FunctionComponent<BoardPropsType> = ({ xIsNext, squares, onPlay }) 
   if (winner) {
     status = 'Winner: ' + winner;
   } else {
-    status = 'Next player: ' + (xIsNext ? 'X' : 'O');
+    status = 'Next player: ' + (isXNext ? 'X' : 'O');
   }
 
   return (

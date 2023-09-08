@@ -27,19 +27,19 @@
   letter-spacing: 0.15px;
 }
 
-.text-body1 {
+.text-body-medium {
   font-size: 14px;
   line-height: 20px;
 }
 
-.text-body2 {
+.text-body-small {
   font-size: 13px;
   line-height: 16px;
 
   letter-spacing: 0;
 }
 
-.text-body1-blue {
-  @extend .text-body1;
-  color: $color-blue;
+.text-body-medium-primary {
+  @extend .text-body-medium;
+  color: $color-primary;
 }

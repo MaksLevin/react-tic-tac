@@ -10,7 +10,7 @@ const Game: FunctionComponent<UsersDataProps> = ({ usersData }) => {
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const [currentMove, setCurrentMove] = useState(0);
 
-  const xIsNext = currentMove % 2 === 0;
+  const isXNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
 
   function handlePlay(nextSquares: string[]): void {
@@ -40,12 +40,12 @@ const Game: FunctionComponent<UsersDataProps> = ({ usersData }) => {
   return (
     <section className="wrapper">
       <div className="users-board">
-        <p className="text-body1-blue">First Player: {usersData.firstPlayer}</p>
-        <p className="text-body1-blue">Second Player: {usersData.secondPlayer}</p>
+        <p className="text-body-medium-primary">First Player: {usersData.firstPlayer}</p>
+        <p className="text-body-medium-primary">Second Player: {usersData.secondPlayer}</p>
       </div>
       <div className="game">
         <div className="game-board">
-          <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+          <Board isXNext={isXNext} squares={currentSquares} onPlay={handlePlay} />
         </div>
         <div className="game-history">
           <h3 className="game-history-title text-h3">History</h3>
