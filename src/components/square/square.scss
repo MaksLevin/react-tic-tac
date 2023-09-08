@@ -1,0 +1,14 @@
+@import "../../styles/common/variables";
+
+.square {
+    background: $color-main;
+    border: 1px solid $color-primary;
+    float: left;
+    color: $color-primary;
+    min-height: 50px;
+    margin-right: -1px;
+    margin-top: -1px;
+    padding: 0;
+    text-align: center;
+    min-width: 50px;
+}

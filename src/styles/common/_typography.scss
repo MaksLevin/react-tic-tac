@@ -1,4 +1,4 @@
-@import 'variables';
+@import "variables";
 
 .text-h1 {
   font-family: $font-family;
@@ -8,7 +8,7 @@
 
   letter-spacing: 0.2px;
 }
-  
+
 .text-h2 {
   font-family: $font-family;
   font-size: 22px;
@@ -17,7 +17,7 @@
 
   letter-spacing: 0.15px;
 }
-  
+
 .text-h3 {
   font-family: $font-family;
   font-size: 19px;
@@ -27,14 +27,19 @@
   letter-spacing: 0.15px;
 }
 
-.text-body1 {
+.text-body-medium {
   font-size: 14px;
   line-height: 20px;
 }
 
-.text-body2 {
+.text-body-small {
   font-size: 13px;
   line-height: 16px;
 
   letter-spacing: 0;
+}
+
+.text-body-medium-primary {
+  @extend .text-body-medium;
+  color: $color-primary;
 }
