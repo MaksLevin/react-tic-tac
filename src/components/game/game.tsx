@@ -1,14 +1,21 @@
 import React, { FunctionComponent, useState } from 'react';
 import Button from '@mui/material/Button';
+import { useSelector } from 'react-redux';
 
-import { UsersDataProps } from '../../core/models/user-model';
 import Board from '../board';
+import {
+  selectUsersAvatar,
+  selectUsersNames,
+} from '../../core/store/login/selector/users-login.selectors';
 
 import './game.scss';
 
-const Game: FunctionComponent<UsersDataProps> = ({ usersData }) => {
+const Game: FunctionComponent = () => {
   const [history, setHistory] = useState([Array(9).fill(null)]);
   const [currentMove, setCurrentMove] = useState(0);
+
+  const usersNames = useSelector(selectUsersNames);
+  const usersAvatar = useSelector(selectUsersAvatar);
 
   const isXNext = currentMove % 2 === 0;
   const currentSquares = history[currentMove];
@@ -40,8 +47,14 @@ const Game: FunctionComponent<UsersDataProps> = ({ usersData }) => {
   return (
     <section className="wrapper">
       <div className="users-board">
-        <p className="text-body-medium-primary">First Player: {usersData.firstPlayer}</p>
-        <p className="text-body-medium-primary">Second Player: {usersData.secondPlayer}</p>
+        <div className="users-board-wrapper">
+          <img className="users-board-avatar" src={usersAvatar} alt="" />
+          <p className="text-body-medium-primary">First Player: {usersNames.firstPlayer}</p>
+        </div>
+        <div className="users-board-wrapper">
+          <img className="users-board-avatar" src={usersAvatar} alt="" />
+          <p className="text-body-medium-primary">Second Player: {usersNames.secondPlayer}</p>
+        </div>
       </div>
       <div className="game">
         <div className="game-board">

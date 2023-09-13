@@ -3,27 +3,38 @@ import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import { styled } from '@mui/material/styles';
+import { useDispatch } from 'react-redux';
 
 import { loginValidationSchema } from './login-utils';
 import { UsersData } from '../../core/models/user-model';
+import {
+  fetchUserAvatarSuccess,
+  getLoginUserSuccess,
+} from '../../core/store/login/actionCreators/users-login.actionCreators';
+import { fetchWrapper } from '../../core/api/api';
 
 import './login.scss';
 
-type LoginPropsType = {
-  onUsersLogin(usersData: UsersData): void;
-};
+const Login: FunctionComponent = () => {
+  const dispatch = useDispatch();
 
-const Login: FunctionComponent<LoginPropsType> = ({ onUsersLogin }) => {
   const routerNavigate = useNavigate();
 
-  const initialValues = {
+  const initialValues: UsersData = {
     firstPlayer: '',
     secondPlayer: '',
+    playerAvatar: '',
   };
 
-  const submitForm = useCallback((values: UsersData) => {
-    onUsersLogin({ firstPlayer: values.firstPlayer, secondPlayer: values.secondPlayer });
+  const submitForm = useCallback(async (values: UsersData) => {
+    dispatch(getLoginUserSuccess(values));
     routerNavigate('/game');
+
+    if (values.playerAvatar) {
+      await fetchWrapper.post('/users', { id: 1, playerAvatar: values.playerAvatar });
+      dispatch(fetchUserAvatarSuccess());
+    }
   }, []);
 
   const formikConfig = useMemo(() => {
@@ -36,7 +47,20 @@ const Login: FunctionComponent<LoginPropsType> = ({ onUsersLogin }) => {
 
   const formik = useFormik(formikConfig);
 
-  const { handleSubmit, values, handleChange, handleBlur, touched, errors } = formik;
+  const { handleSubmit, values, handleChange, handleBlur, touched, errors, setFieldValue } = formik;
+
+  const VisuallyHiddenInput = styled('input')`
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    white-space: nowrap;
+    width: 1px;
+  `;
+
   return (
     <section className="login">
       <div className="login-wrapper">
@@ -65,6 +89,25 @@ const Login: FunctionComponent<LoginPropsType> = ({ onUsersLogin }) => {
             helperText={touched.secondPlayer && errors.secondPlayer}
             variant="outlined"
           />
+
+          <Button component="label" variant="contained" href="#file-upload">
+            Upload a player avatar
+            <VisuallyHiddenInput
+              type="file"
+              id="playerAvatar"
+              name="playerAvatar"
+              onChange={(e) => {
+                const fileReader = new FileReader();
+                fileReader.onload = () => {
+                  if (fileReader.readyState === 2) {
+                    setFieldValue('playerAvatar', fileReader.result);
+                  }
+                };
+                if (!e.target.files) return;
+                fileReader.readAsDataURL(e.target.files[0]);
+              }}
+            />
+          </Button>
 
           <Button
             className="login-form-submit"
