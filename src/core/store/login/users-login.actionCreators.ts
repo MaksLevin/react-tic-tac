@@ -1,10 +1,11 @@
-import { ActionLogin } from '../../../models/store-model';
-import { UsersData } from '../../../models/user-model';
+import { ActionLogin } from '../../models/store-model';
+import { UsersData } from '../../models/user-model';
 import {
   FetchUserAvatarSuccess,
   GetLoginUserSuccess,
+  PostUserAvatarSuccess,
   SetUserAvatarSuccess,
-} from '../actions/users-login.action';
+} from './users-login.action';
 
 export function getLoginUserSuccess(value: UsersData): ActionLogin {
   return {
@@ -14,9 +15,9 @@ export function getLoginUserSuccess(value: UsersData): ActionLogin {
   };
 }
 
-export function setUserAvatarSuccess(value: string) {
+export function postUserAvatarSuccess(value: string) {
   return {
-    type: SetUserAvatarSuccess,
+    type: PostUserAvatarSuccess,
     playerAvatar: value,
   };
 }
@@ -24,5 +25,12 @@ export function setUserAvatarSuccess(value: string) {
 export function fetchUserAvatarSuccess() {
   return {
     type: FetchUserAvatarSuccess,
+  };
+}
+
+export function setUserAvatarSuccess(value: string) {
+  return {
+    type: SetUserAvatarSuccess,
+    playerAvatar: value,
   };
 }

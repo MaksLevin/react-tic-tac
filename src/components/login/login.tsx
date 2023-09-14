@@ -3,15 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import { styled } from '@mui/material/styles';
 import { useDispatch } from 'react-redux';
 
-import { loginValidationSchema } from './login-utils';
+import { VisuallyHiddenInput, loginValidationSchema } from './login-utils';
 import { UsersData } from '../../core/models/user-model';
 import {
   fetchUserAvatarSuccess,
   getLoginUserSuccess,
-} from '../../core/store/login/actionCreators/users-login.actionCreators';
+  postUserAvatarSuccess,
+} from '../../core/store/login/users-login.actionCreators';
 import { fetchWrapper } from '../../core/api/api';
 
 import './login.scss';
@@ -27,15 +27,18 @@ const Login: FunctionComponent = () => {
     playerAvatar: '',
   };
 
-  const submitForm = useCallback(async (values: UsersData) => {
-    dispatch(getLoginUserSuccess(values));
-    routerNavigate('/game');
+  const submitForm = useCallback(
+    (values: UsersData) => {
+      dispatch(getLoginUserSuccess(values));
+      routerNavigate('/game');
 
-    if (values.playerAvatar) {
-      await fetchWrapper.post('/users', { id: 1, playerAvatar: values.playerAvatar });
+      if (values.playerAvatar) {
+        dispatch(postUserAvatarSuccess(values.playerAvatar));
+      }
       dispatch(fetchUserAvatarSuccess());
-    }
-  }, []);
+    },
+    [dispatch]
+  );
 
   const formikConfig = useMemo(() => {
     return {
@@ -43,23 +46,22 @@ const Login: FunctionComponent = () => {
       validationSchema: loginValidationSchema,
       onSubmit: submitForm,
     };
-  }, [initialValues, submitForm]);
+  }, [submitForm]);
 
   const formik = useFormik(formikConfig);
 
-  const { handleSubmit, values, handleChange, handleBlur, touched, errors, setFieldValue } = formik;
+  const handleUploadFile = useCallback((e: any) => {
+    const fileReader = new FileReader();
+    fileReader.onload = () => {
+      if (fileReader.readyState === 2) {
+        setFieldValue('playerAvatar', fileReader.result);
+      }
+    };
+    if (!e.target.files) return;
+    fileReader.readAsDataURL(e.target.files[0]);
+  }, []);
 
-  const VisuallyHiddenInput = styled('input')`
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    height: 1px;
-    overflow: hidden;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    white-space: nowrap;
-    width: 1px;
-  `;
+  const { handleSubmit, values, handleChange, handleBlur, touched, errors, setFieldValue } = formik;
 
   return (
     <section className="login">
@@ -96,16 +98,7 @@ const Login: FunctionComponent = () => {
               type="file"
               id="playerAvatar"
               name="playerAvatar"
-              onChange={(e) => {
-                const fileReader = new FileReader();
-                fileReader.onload = () => {
-                  if (fileReader.readyState === 2) {
-                    setFieldValue('playerAvatar', fileReader.result);
-                  }
-                };
-                if (!e.target.files) return;
-                fileReader.readAsDataURL(e.target.files[0]);
-              }}
+              onChange={handleUploadFile}
             />
           </Button>
 

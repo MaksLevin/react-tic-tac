@@ -1,6 +1,6 @@
-import { ActionLogin } from '../../../models/store-model';
-import { initialState } from '../../initialState';
-import { GetLoginUserSuccess, SetUserAvatarSuccess } from '../actions/users-login.action';
+import { ActionLogin } from '../../models/store-model';
+import { initialState } from '../initialState';
+import { GetLoginUserSuccess, SetUserAvatarSuccess } from './users-login.action';
 
 export function reducerLoginUser(state = initialState, action: ActionLogin) {
   switch (action.type) {

@@ -3,10 +3,7 @@ import Button from '@mui/material/Button';
 import { useSelector } from 'react-redux';
 
 import Board from '../board';
-import {
-  selectUsersAvatar,
-  selectUsersNames,
-} from '../../core/store/login/selector/users-login.selectors';
+import { selectUsersAvatar, selectUsersNames } from '../../core/store/login/users-login.selectors';
 
 import './game.scss';
 

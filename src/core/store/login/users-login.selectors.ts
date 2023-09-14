@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 
-import { UsersData } from '../../../models/user-model';
-import { StoreData } from '../../../models/store-model';
+import { UsersData } from '../../models/user-model';
+import { StoreData } from '../../models/store-model';
 
 export const selectUserData = (state: StoreData) => state.reducerLoginUser;
 
