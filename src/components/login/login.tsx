@@ -3,28 +3,42 @@ import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
+import { useDispatch } from 'react-redux';
 
-import { loginValidationSchema } from './login-utils';
+import { VisuallyHiddenInput, loginValidationSchema } from './login-utils';
 import { UsersData } from '../../core/models/user-model';
+import {
+  fetchUserAvatarSuccess,
+  getLoginUserSuccess,
+  postUserAvatarSuccess,
+} from '../../core/store/login/users-login.actionCreators';
+import { fetchWrapper } from '../../core/api/api';
 
 import './login.scss';
 
-type LoginPropsType = {
-  onUsersLogin(usersData: UsersData): void;
-};
+const Login: FunctionComponent = () => {
+  const dispatch = useDispatch();
 
-const Login: FunctionComponent<LoginPropsType> = ({ onUsersLogin }) => {
   const routerNavigate = useNavigate();
 
-  const initialValues = {
+  const initialValues: UsersData = {
     firstPlayer: '',
     secondPlayer: '',
+    playerAvatar: '',
   };
 
-  const submitForm = useCallback((values: UsersData) => {
-    onUsersLogin({ firstPlayer: values.firstPlayer, secondPlayer: values.secondPlayer });
-    routerNavigate('/game');
-  }, []);
+  const submitForm = useCallback(
+    (values: UsersData) => {
+      dispatch(getLoginUserSuccess(values));
+      routerNavigate('/game');
+
+      if (values.playerAvatar) {
+        dispatch(postUserAvatarSuccess(values.playerAvatar));
+      }
+      dispatch(fetchUserAvatarSuccess());
+    },
+    [dispatch]
+  );
 
   const formikConfig = useMemo(() => {
     return {
@@ -32,11 +46,23 @@ const Login: FunctionComponent<LoginPropsType> = ({ onUsersLogin }) => {
       validationSchema: loginValidationSchema,
       onSubmit: submitForm,
     };
-  }, [initialValues, submitForm]);
+  }, [submitForm]);
 
   const formik = useFormik(formikConfig);
 
-  const { handleSubmit, values, handleChange, handleBlur, touched, errors } = formik;
+  const handleUploadFile = useCallback((e: any) => {
+    const fileReader = new FileReader();
+    fileReader.onload = () => {
+      if (fileReader.readyState === 2) {
+        setFieldValue('playerAvatar', fileReader.result);
+      }
+    };
+    if (!e.target.files) return;
+    fileReader.readAsDataURL(e.target.files[0]);
+  }, []);
+
+  const { handleSubmit, values, handleChange, handleBlur, touched, errors, setFieldValue } = formik;
+
   return (
     <section className="login">
       <div className="login-wrapper">
@@ -65,6 +91,16 @@ const Login: FunctionComponent<LoginPropsType> = ({ onUsersLogin }) => {
             helperText={touched.secondPlayer && errors.secondPlayer}
             variant="outlined"
           />
+
+          <Button component="label" variant="contained" href="#file-upload">
+            Upload a player avatar
+            <VisuallyHiddenInput
+              type="file"
+              id="playerAvatar"
+              name="playerAvatar"
+              onChange={handleUploadFile}
+            />
+          </Button>
 
           <Button
             className="login-form-submit"
